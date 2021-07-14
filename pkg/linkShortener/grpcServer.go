@@ -19,3 +19,5 @@ func (s *GRPCServer) Create(ctx context.Context, req *api.CreateRequest) (*api.C
 
 	return &api.CreateResponse{ShortUrl: string(short)}, nil
 }
+
+func (s *GRPCServer) mustEmbedUnimplementedLinkShortenerServer() {}
