@@ -1,4 +1,4 @@
-package shorsServer
+package linkShortener
 
 import (
 	"context"
