@@ -2,10 +2,10 @@ syntax = "proto3";
 
 package api;
 
-option go_package = "./api";
+option go_package = "/api";
 
 service linkShortener{
-    rpc Create (CreateRequest) returns (CreateResponse){}
+    rpc Create(CreateRequest) returns (CreateResponse){}
 }
 
 message CreateRequest{
