@@ -9,7 +9,9 @@ import (
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
 
-type GRPCServer struct{}
+type GRPCServer struct {
+	api.UnimplementedLinkShortenerServer
+}
 
 func (s *GRPCServer) Create(ctx context.Context, req *api.CreateRequest) (*api.CreateResponse, error) {
 	short := make([]byte, 5)
@@ -19,5 +21,3 @@ func (s *GRPCServer) Create(ctx context.Context, req *api.CreateRequest) (*api.C
 
 	return &api.CreateResponse{ShortUrl: string(short)}, nil
 }
-
-func (s *GRPCServer) mustEmbedUnimplementedLinkShortenerServer() {}
