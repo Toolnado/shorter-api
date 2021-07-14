@@ -1,3 +1,3 @@
-module github.com/toolnado/shorter-api
+module github.com/Toolnado/shorter-api
 
 go 1.16
