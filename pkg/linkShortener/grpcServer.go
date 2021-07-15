@@ -5,6 +5,8 @@ import (
 	"math/rand"
 
 	"github.com/Toolnado/shorter-api/pkg/api"
+	"github.com/Toolnado/shorter-api/pkg/model"
+	"github.com/Toolnado/shorter-api/pkg/store"
 )
 
 const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ"
@@ -14,10 +16,21 @@ type GRPCServer struct {
 }
 
 func (s *GRPCServer) Create(ctx context.Context, req *api.CreateRequest) (*api.CreateResponse, error) {
-	short := make([]byte, 5)
-	for i := range short {
-		short[i] = letterBytes[rand.Intn(len(letterBytes))]
+	store := store.Store{}
+	store.Open()
+	defer store.Close()
+
+	shortUrl := make([]byte, 10)
+	for i := range shortUrl {
+		shortUrl[i] = letterBytes[rand.Intn(len(letterBytes))]
 	}
 
-	return &api.CreateResponse{ShortUrl: string(short)}, nil
+	newLink := model.Link{
+		LongUrl:  req.GetUrl(),
+		ShortUrl: string(shortUrl),
+	}
+
+	store.Link().Create(&newLink)
+
+	return &api.CreateResponse{ShortUrl: newLink.ShortUrl}, nil
 }

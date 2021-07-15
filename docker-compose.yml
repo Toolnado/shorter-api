@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  link-shorter:
+    build: ./
+    command: ./shorter-api
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    environment:
+      - user=postgres
+      - password=mypass
+      - dbname=linkShorterDB
+      - sslmode=disable
+
+  db:
+    restart: always
+    image: postgres:latest
+    volumes:
+      - ././database/postgres/data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=mypass
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=linkShorterDB
+    ports:
+      - 5432:5432
