@@ -6,7 +6,9 @@ option go_package = "/api";
 
 service linkShortener{
     rpc Create(CreateRequest) returns (CreateResponse){}
+    rpc Get(GetRequest) returns (GetResponse){}
 }
+
 
 message CreateRequest{
     string url = 1;
@@ -14,4 +16,12 @@ message CreateRequest{
 
 message CreateResponse{
     string shortUrl = 1;
+}
+
+message GetRequest{
+    string shortUrl=1;
+}
+
+message GetResponse{
+    string url = 1;
 }

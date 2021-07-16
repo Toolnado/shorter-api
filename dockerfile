@@ -1,12 +1,12 @@
-FROM golang:1.16.5-buster
+FROM golang:1.16-buster
 
 RUN go version
 
-ENV GOPATH=/
+ENV GOPATH=/ 
 
 COPY ./ ./
 
-RUN go mod download
-RUN go build -o shorter-api ./cmd/server/main.go
+RUN go mod download 
+RUN go build -o shorter-api-server.exe ./cmd/server/main.go 
 
-CMD ["./shorter-api"]
+CMD ["./shorter-api-server.exe"]

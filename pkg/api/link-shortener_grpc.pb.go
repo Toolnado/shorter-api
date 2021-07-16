@@ -19,6 +19,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LinkShortenerClient interface {
 	Create(ctx context.Context, in *CreateRequest, opts ...grpc.CallOption) (*CreateResponse, error)
+	Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error)
 }
 
 type linkShortenerClient struct {
@@ -38,11 +39,21 @@ func (c *linkShortenerClient) Create(ctx context.Context, in *CreateRequest, opt
 	return out, nil
 }
 
+func (c *linkShortenerClient) Get(ctx context.Context, in *GetRequest, opts ...grpc.CallOption) (*GetResponse, error) {
+	out := new(GetResponse)
+	err := c.cc.Invoke(ctx, "/api.linkShortener/Get", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LinkShortenerServer is the server API for LinkShortener service.
 // All implementations must embed UnimplementedLinkShortenerServer
 // for forward compatibility
 type LinkShortenerServer interface {
 	Create(context.Context, *CreateRequest) (*CreateResponse, error)
+	Get(context.Context, *GetRequest) (*GetResponse, error)
 	mustEmbedUnimplementedLinkShortenerServer()
 }
 
@@ -52,6 +63,9 @@ type UnimplementedLinkShortenerServer struct {
 
 func (UnimplementedLinkShortenerServer) Create(context.Context, *CreateRequest) (*CreateResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Create not implemented")
+}
+func (UnimplementedLinkShortenerServer) Get(context.Context, *GetRequest) (*GetResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Get not implemented")
 }
 func (UnimplementedLinkShortenerServer) mustEmbedUnimplementedLinkShortenerServer() {}
 
@@ -84,6 +98,24 @@ func _LinkShortener_Create_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LinkShortener_Get_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LinkShortenerServer).Get(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/api.linkShortener/Get",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LinkShortenerServer).Get(ctx, req.(*GetRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LinkShortener_ServiceDesc is the grpc.ServiceDesc for LinkShortener service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -95,7 +127,11 @@ var LinkShortener_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "Create",
 			Handler:    _LinkShortener_Create_Handler,
 		},
+		{
+			MethodName: "Get",
+			Handler:    _LinkShortener_Get_Handler,
+		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "link-shortener.proto",
+	Metadata: "link-shortener/proto/link-shortener.proto",
 }

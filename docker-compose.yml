@@ -1,18 +1,27 @@
 version: '3.8'
 
 services:
-  link-shorter:
+  server:
     build: ./
-    command: ./shorter-api
-    ports:
-      - 8080:8080
+    command: ./shorter-api-server.exe
     depends_on:
+      - client
       - db
     environment:
-      - user=postgres
-      - password=mypass
-      - dbname=linkShorterDB
-      - sslmode=disable
+      - DATABASE_URL=postgres://postgres:qwerty@db:5432/linkshorterdb
+      - PORT=:8080
+    ports:
+      - 8081:8080
+
+  client:
+    build:
+      context: .
+      dockerfile: ./client.dockerfile
+    command: ./shorter-api-client.exe
+    environment:
+      - PORT=:8080
+    ports:
+      - 8181:8181
 
   db:
     restart: always
@@ -20,8 +29,8 @@ services:
     volumes:
       - ././database/postgres/data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_PASSWORD=mypass
+      - POSTGRES_PASSWORD=qwerty
       - POSTGRES_USER=postgres
-      - POSTGRES_DB=linkShorterDB
+      - POSTGRES_DB=linkshorterdb
     ports:
-      - 5432:5432
+      - 5436:5432

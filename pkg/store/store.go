@@ -1,39 +1,37 @@
 package store
 
 import (
-	"database/sql"
+	"context"
+	"fmt"
 	"log"
 	"os"
 
-	_ "github.com/lib/pq"
+	"github.com/jackc/pgx/v4"
 )
 
 type Store struct {
-	db             *sql.DB
+	db             *pgx.Conn
 	linkRepository *LinkRepository
 }
 
-func (s *Store) Open() error {
+func (s *Store) Open() (*pgx.Conn, error) {
 	dbUrl, ok := os.LookupEnv("DATABASE_URL")
 	if !ok {
 		log.Println("Database url not found")
 	}
-	db, err := sql.Open("postgres", dbUrl)
+	db, err := pgx.Connect(context.Background(), dbUrl)
 	if err != nil {
-		return err
-	}
-
-	if err := db.Ping(); err != nil {
-		return err
+		fmt.Println("con faled")
+		log.Fatal(err)
 	}
 
 	s.db = db
 
-	return nil
+	return s.db, nil
 }
 
 func (s *Store) Close() {
-	s.db.Close()
+	s.db.Close(context.Background())
 }
 
 func (s *Store) Link() *LinkRepository {
