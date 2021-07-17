@@ -9,7 +9,7 @@ services:
     depends_on:
       - db
     environment:
-      - DATABASE_URL=postgres://postgres:qwerty@db:5432/linkshorterdb
+      - DATABASE_URL=postgres://postgres:qwerty@db:5432/linkshorterdb?sslmode=disable
       - PORT=:8080
     ports:
       - 8081:8080

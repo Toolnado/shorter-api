@@ -6,12 +6,34 @@ import (
 	"log"
 	"os"
 
+	"github.com/golang-migrate/migrate/v4"
 	"github.com/jackc/pgx/v4"
 )
 
 type Store struct {
 	db             *pgx.Conn
 	linkRepository *LinkRepository
+}
+
+func (s *Store) Migrate() error {
+	dbUrl, ok := os.LookupEnv("DATABASE_URL")
+	if !ok {
+		log.Println("Database url not found")
+	}
+
+	m, err := migrate.New(
+		"shorter-api/migrations/20210717194858_create_links.up.sql",
+		dbUrl)
+	if err != nil {
+		fmt.Println("Error 1:", err)
+		return err
+	}
+	if err := m.Up(); err != nil {
+		fmt.Println("Error 2:", err)
+		return err
+	}
+
+	return nil
 }
 
 func (s *Store) Open() (*pgx.Conn, error) {

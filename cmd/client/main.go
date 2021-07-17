@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/Toolnado/shorter-api/pkg/api"
+	"github.com/Toolnado/shorter-api/pkg/store"
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 )
@@ -18,9 +19,17 @@ func init() {
 }
 
 func main() {
-	var url string
-	var comand string
-	var ending bool
+	var (
+		url    string
+		comand string
+		ending bool
+	)
+
+	migrateStore := store.Store{}
+
+	if err := migrateStore.Migrate(); err != nil {
+		fmt.Println(err)
+	}
 
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
