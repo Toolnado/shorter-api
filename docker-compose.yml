@@ -1,11 +1,12 @@
-version: '3.8'
+version: '3.9'
 
 services:
   server:
-    build: ./
+    build:
+      context: .
+      dockerfile: ./server.dockerfile
     command: ./shorter-api-server.exe
     depends_on:
-      - client
       - db
     environment:
       - DATABASE_URL=postgres://postgres:qwerty@db:5432/linkshorterdb
@@ -18,10 +19,12 @@ services:
       context: .
       dockerfile: ./client.dockerfile
     command: ./shorter-api-client.exe
+    stdin_open: true
+    tty: true
+    depends_on:
+      - server
     environment:
       - PORT=:8080
-    ports:
-      - 8181:8181
 
   db:
     restart: always
