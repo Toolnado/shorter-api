@@ -2,7 +2,10 @@ version: '3.9'
 
 services:
   server:
-    image: 77187719/shorter-api_server
+    build:
+      context: .
+      dockerfile: ./server.dockerfile
+    # image: 77187719/shorter-api_server
     command: ./shorter-api-server.exe
     depends_on:
       - db
@@ -14,7 +17,10 @@ services:
       - 8080:8080
 
   client:
-    image: 77187719/shorter-api_client
+    build:
+      context: .
+      dockerfile: ./client.dockerfile
+    # image: 77187719/shorter-api_client
     command: ./shorter-api-client.exe
     stdin_open: true
     tty: true
