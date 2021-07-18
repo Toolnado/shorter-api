@@ -2,8 +2,9 @@ package store
 
 import (
 	"context"
+	"math/rand"
 
-	"github.com/Toolnado/shorter-api/pkg/model"
+	"github.com/Toolnado/shorter-api/internal/model"
 )
 
 type LinkRepository struct {
@@ -25,4 +26,22 @@ func (r *LinkRepository) Get(l *model.Link) (*model.Link, error) {
 		return nil, err
 	}
 	return l, nil
+}
+
+func (r *LinkRepository) CheckShortUrl(shortUrl string) (string, error) {
+	var check string
+	if err := r.store.db.QueryRow(context.Background(), "SELECT long_url FROM links WHERE short_url=$1", shortUrl).Scan(&check); err != nil {
+		return "", nil
+	}
+	return check, nil
+
+}
+
+func (r *LinkRepository) GenerateShortUrl(shortUrl []byte) []byte {
+	const letterBytes = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_"
+	for i := range shortUrl {
+		shortUrl[i] = letterBytes[rand.Intn(len(letterBytes))]
+	}
+
+	return shortUrl
 }

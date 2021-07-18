@@ -9,7 +9,6 @@ service linkShortener{
     rpc Get(GetRequest) returns (GetResponse){}
 }
 
-
 message CreateRequest{
     string url = 1;
 }

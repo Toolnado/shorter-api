@@ -6,8 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/Toolnado/shorter-api/pkg/api"
-	"github.com/Toolnado/shorter-api/pkg/store"
+	"github.com/Toolnado/shorter-api/internal/api"
 	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 )
@@ -25,16 +24,11 @@ func main() {
 		ending bool
 	)
 
-	migrateStore := store.Store{}
-
-	if err := migrateStore.Migrate(); err != nil {
-		fmt.Println(err)
-	}
-
 	port, ok := os.LookupEnv("PORT")
 	if !ok {
 		log.Fatal("port not found")
 	}
+
 	conn, err := grpc.Dial(port, grpc.WithInsecure())
 	if err != nil {
 		log.Fatal(err)
@@ -47,7 +41,6 @@ func main() {
 		switch comand {
 		case "CREATE":
 			fmt.Printf("Please enter url\n")
-
 			fmt.Scanf("%v\n", &url)
 
 			if url != "" {
@@ -62,7 +55,6 @@ func main() {
 
 		case "GET":
 			fmt.Printf("Please enter shorturl\n")
-
 			fmt.Scanf("%v\n", &url)
 
 			if url != "" {
@@ -70,7 +62,7 @@ func main() {
 				if err != nil {
 					log.Fatal(err)
 				}
-				if res == nil {
+				if res.Url == "" {
 					fmt.Printf("url not found\n")
 				} else {
 					fmt.Printf("Original url for %s = %s\n", url, res.GetUrl())
@@ -89,4 +81,5 @@ func main() {
 		}
 
 	}
+	os.Exit(0)
 }

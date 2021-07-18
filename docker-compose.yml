@@ -2,29 +2,46 @@ version: '3.9'
 
 services:
   server:
-    build:
-      context: .
-      dockerfile: ./server.dockerfile
+    image: 77187719/shorter-api_server
     command: ./shorter-api-server.exe
     depends_on:
       - db
+      - migrate
     environment:
-      - DATABASE_URL=postgres://postgres:qwerty@db:5432/linkshorterdb?sslmode=disable
-      - PORT=:8080
+      PORT: :8080
+      DATABASE_URL: postgres://postgres:qwerty@db:5432/linkshorterdb?sslmode=disable
     ports:
-      - 8081:8080
+      - 8080:8080
 
   client:
-    build:
-      context: .
-      dockerfile: ./client.dockerfile
+    image: 77187719/shorter-api_client
     command: ./shorter-api-client.exe
     stdin_open: true
     tty: true
     depends_on:
       - server
     environment:
-      - PORT=:8080
+      PORT: server:8080
+    ports:
+      - 3000:3000
+
+  migrate:
+    restart: always
+    image: migrate/migrate
+    environment:
+      DATABASE_URL: postgres://postgres:qwerty@db:5432/linkshorterdb?sslmode=disable
+    command:
+      [
+        '-database',
+        'postgres://postgres:qwerty@db:5432/linkshorterdb?sslmode=disable',
+        '-path',
+        '/migrations',
+        'up',
+      ]
+    volumes:
+      - $PWD/database/migrations:/migrations
+    depends_on:
+      - db
 
   db:
     restart: always
@@ -32,8 +49,8 @@ services:
     volumes:
       - ././database/postgres/data:/var/lib/postgresql/data
     environment:
-      - POSTGRES_PASSWORD=qwerty
-      - POSTGRES_USER=postgres
-      - POSTGRES_DB=linkshorterdb
+      POSTGRES_PASSWORD: qwerty
+      POSTGRES_USER: postgres
+      POSTGRES_DB: linkshorterdb
     ports:
       - 5436:5432
