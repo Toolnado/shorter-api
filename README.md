@@ -1,3 +1,5 @@
+https://img.shields.io/github/go-mod/go-version/Toolnado/shorter-api
+
 # Shorter-api
 
 Shorter-api - это сервис, позволяющий сокращать ссылки, записывать их в базу данных и получать оригинальную ссылку по ее уникальной короткой версии.
