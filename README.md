@@ -1,4 +1,4 @@
-https://img.shields.io/github/go-mod/go-version/Toolnado/shorter-api
+<img alt="GitHub go.mod Go version" src="https://img.shields.io/github/go-mod/go-version/Toolnado/shorter-api">
 
 # Shorter-api
 
